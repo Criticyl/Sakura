@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.60)
 
 project(Sakura VERSION 1.0)
 
@@ -34,3 +34,4 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 add_subdirectory(Sakura)
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "Sakura")

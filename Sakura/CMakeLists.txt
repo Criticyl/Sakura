@@ -3,6 +3,7 @@ find_package(Vulkan REQUIRED)
 SET(SOURCE_DIR "src")
 SET(SOURCES
     src/Main.cpp
+    src/Application.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
