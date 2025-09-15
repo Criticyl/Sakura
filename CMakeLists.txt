@@ -35,4 +35,5 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 add_subdirectory(Sakura)
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "Sakura")
+add_subdirectory(Sandbox)
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "Sandbox")

@@ -1,6 +1,5 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 #include <string>
@@ -24,6 +23,8 @@ namespace Sakura {
         { 
             Init();
         }
+
+        inline GLFWwindow* GetWindow() const { return m_Window; }
 
         ~Window();
     private:

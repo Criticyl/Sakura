@@ -1,19 +1,26 @@
 find_package(Vulkan REQUIRED)
 
-SET(SOURCE_DIR "src")
-SET(SOURCES
-    src/Main.cpp
-    src/Application.cpp
-    src/Application.h
-    src/Window.h
+SET(CORE_SOURCE_FILES 
+    src/Core/Main.cpp
+    src/Core/Application.cpp
+    src/Core/Application.h
+    src/Core/Window.cpp
+    src/Core/Window.h
 )
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+SET(SOURCES
+    ${CORE_SOURCE_FILES}
+    src/Sakura.h
+)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
+add_library(Sakura STATIC ${SOURCES})
+
+target_include_directories(Sakura PUBLIC src)
+
+target_link_libraries(Sakura PUBLIC
     glfw
     glm
     Vulkan::Vulkan
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_VULKAN)
+target_compile_definitions(Sakura PRIVATE GLFW_INCLUDE_VULKAN)

@@ -4,11 +4,13 @@
 #include <cstdlib>
 
 int main() {
-    Sakura::HelloTriangleApplication app;
 
     try 
     {
-        app.Run();
+        Sakura::Application* app = Sakura::CreateApplication();
+        app->Run();
+
+        delete app;
     }
     catch (const std::exception& e)
     {
