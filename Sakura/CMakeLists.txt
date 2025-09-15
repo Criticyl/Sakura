@@ -4,6 +4,8 @@ SET(SOURCE_DIR "src")
 SET(SOURCES
     src/Main.cpp
     src/Application.cpp
+    src/Application.h
+    src/Window.h
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
