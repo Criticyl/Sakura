@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.60)
+cmake_minimum_required(VERSION 3.20)
 
 project(Sakura VERSION 1.0)
 
