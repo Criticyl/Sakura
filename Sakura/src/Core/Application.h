@@ -8,11 +8,24 @@
 
 namespace Sakura {
 
+    struct ApplicationProperties
+    {
+        std::string Name = "Example Application";
+        std::uint32_t MajorVersion = 1;
+        std::uint32_t MinorVersion = 0;
+        std::uint32_t BuildVersion = 0;
+    };
+
     class Application
     {
     public:
 
-        Application();
+        Application(const ApplicationProperties& appProperties)
+            : m_Properties(appProperties)
+        {
+            Init();
+        }
+
         virtual ~Application();
 
         void Run();
@@ -22,10 +35,13 @@ namespace Sakura {
         void Init();
         void Shutdown();
 
+        void CreateVkInstance();
+
     private:
 
+        ApplicationProperties m_Properties;
         std::unique_ptr<Window> m_Window;
-        GraphicsPipeline m_GraphicsPipeline{ "Shaders/simple.vert.spv", "Shaders/simple.frag.spv" };
+        VkInstance m_Instance;
     };
 
     Application* CreateApplication();

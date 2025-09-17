@@ -3,7 +3,8 @@
 class Sandbox : public Sakura::Application
 {
 public:
-    Sandbox()
+    Sandbox(const Sakura::ApplicationProperties& appProperties)
+        : Sakura::Application(appProperties)
     {
         std::cout << "Sandbox Application created!" << std::endl;
     }
@@ -12,9 +13,11 @@ public:
     {
         std::cout << "Sandbox Application destroyed!" << std::endl;
     }
+
 };
 
 Sakura::Application* Sakura::CreateApplication()
 {
-    return new Sandbox();
+    Sakura::ApplicationProperties props;
+    return new Sandbox(props);
 }

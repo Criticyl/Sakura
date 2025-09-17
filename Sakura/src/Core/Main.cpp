@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <cstdlib>
 
+extern Sakura::Application* CreateApplication();
+
 int main() {
 
     try 
