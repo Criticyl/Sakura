@@ -8,8 +8,14 @@ SET(CORE_SOURCE_FILES
     src/Core/Window.h
 )
 
+set(RENDERER_SOURCE_FILES
+    src/Renderer/GraphicsPipeline.cpp
+    src/Renderer/GraphicsPipeline.h
+)
+
 SET(SOURCES
     ${CORE_SOURCE_FILES}
+    ${RENDERER_SOURCE_FILES}
     src/Sakura.h
 )
 
@@ -24,3 +30,7 @@ target_link_libraries(Sakura PUBLIC
 )
 
 target_compile_definitions(Sakura PRIVATE GLFW_INCLUDE_VULKAN)
+
+set_target_properties(Sakura PROPERTIES
+    SAKURA_SHADERS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders"
+)
