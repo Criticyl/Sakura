@@ -28,7 +28,7 @@ namespace Sakura {
 
     void Application::Shutdown()
     {
-        m_IsRunning = false;
+
     }
 
 }

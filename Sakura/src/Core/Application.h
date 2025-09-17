@@ -23,7 +23,6 @@ namespace Sakura {
 
     private:
 
-        bool m_IsRunning = true;
         std::unique_ptr<Window> m_Window;
     };
 
