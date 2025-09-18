@@ -19,5 +19,14 @@ public:
 Sakura::Application* Sakura::CreateApplication()
 {
     Sakura::ApplicationProperties props;
+
+#ifdef NDEBUG
+    props.ValidationLayers = {};
+#else
+    props.ValidationLayers = {
+        "VK_LAYER_KHRONOS_validation"
+    };
+#endif
+
     return new Sandbox(props);
 }

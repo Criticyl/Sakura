@@ -14,6 +14,7 @@ namespace Sakura {
         std::uint32_t MajorVersion = 1;
         std::uint32_t MinorVersion = 0;
         std::uint32_t BuildVersion = 0;
+        std::vector<const char*> ValidationLayers;
     };
 
     class Application
@@ -36,9 +37,11 @@ namespace Sakura {
         void Shutdown();
 
         void CreateVkInstance();
+        bool CheckValidationLayerSupport(const std::vector<const char*>& validationLayers);
 
     private:
 
+        bool m_ValidationLayerEnabled;
         ApplicationProperties m_Properties;
         std::unique_ptr<Window> m_Window;
         VkInstance m_Instance;
