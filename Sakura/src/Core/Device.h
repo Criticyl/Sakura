@@ -12,7 +12,7 @@ namespace Sakura {
 
         inline const VkPhysicalDevice& GetPhysicalDevice() { return m_PhysicalDevice; }
     private:
-        bool isDeviceSuitable();
+        bool isDeviceSuitable(const VkPhysicalDevice& device);
     private:
         VkPhysicalDevice m_PhysicalDevice;
 
