@@ -12,10 +12,10 @@ namespace Sakura {
 
         inline const VkPhysicalDevice& GetPhysicalDevice() { return m_PhysicalDevice; }
     private:
-        bool isDeviceSuitable(const VkPhysicalDevice& device);
+        void PickPhysicalDevice(const std::vector<VkPhysicalDevice>& devices);
+        int RateDevice(const VkPhysicalDevice& device);
+        bool IsDeviceSuitable(const VkPhysicalDevice& device);
     private:
         VkPhysicalDevice m_PhysicalDevice;
-
-
     };
 }

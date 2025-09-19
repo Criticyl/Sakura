@@ -6,6 +6,8 @@ SET(CORE_SOURCE_FILES
     src/Core/Application.h
     src/Core/Window.cpp
     src/Core/Window.h
+    src/Core/Device.cpp
+    src/Core/Device.h
 )
 
 set(RENDERER_SOURCE_FILES
