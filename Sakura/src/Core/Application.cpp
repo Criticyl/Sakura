@@ -12,6 +12,7 @@ namespace Sakura {
         Sakura::WindowProperties windowProps;
         m_Window = std::make_unique<Window>(windowProps);
         CreateVkInstance();
+        m_Device.Init(m_Instance);
     }
 
     void Application::CreateVkInstance()
@@ -93,6 +94,7 @@ namespace Sakura {
 
     void Application::Shutdown()
     {
+        m_Device.Shutdown();
         vkDestroyInstance(m_Instance, nullptr);
     }
 

@@ -1,8 +1,10 @@
 #pragma once
 
+#include <vulkan/vulkan.h>
+
 #include "Window.h"
 #include "Renderer/GraphicsPipeline.h"
-#include <vulkan/vulkan.h>
+#include "Device.h"
 
 #include <iostream>
 
@@ -24,16 +26,15 @@ namespace Sakura {
         Application(const ApplicationProperties& appProperties)
             : m_Properties(appProperties)
         {
-            Init();
         }
 
         virtual ~Application();
 
+        void Init();
         void Run();
 
     private:
 
-        void Init();
         void Shutdown();
 
         void CreateVkInstance();
@@ -43,8 +44,10 @@ namespace Sakura {
 
         bool m_ValidationLayerEnabled;
         ApplicationProperties m_Properties;
-        std::unique_ptr<Window> m_Window;
         VkInstance m_Instance;
+        Device m_Device;
+        std::unique_ptr<Window> m_Window;
+        
     };
 
     Application* CreateApplication();

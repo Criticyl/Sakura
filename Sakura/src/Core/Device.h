@@ -22,12 +22,17 @@ namespace Sakura {
         void Init(const VkInstance& instance);
         QueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice& device);
 
+        void Shutdown();
+
         inline const VkPhysicalDevice& GetPhysicalDevice() { return m_PhysicalDevice; }
     private:
         void PickPhysicalDevice(const std::vector<VkPhysicalDevice>& devices);
+        void CreateLogicalDevice();
         int RateDevice(const VkPhysicalDevice& device);
         bool IsDeviceSuitable(const VkPhysicalDevice& device);
     private:
         VkPhysicalDevice m_PhysicalDevice;
+        VkDevice m_LogicalDevice;
+        VkQueue m_GraphicsQueue;
     };
 }

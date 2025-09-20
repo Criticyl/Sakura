@@ -19,6 +19,12 @@ namespace Sakura {
         vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
         PickPhysicalDevice(devices);
+        CreateLogicalDevice();
+    }
+
+    void Device::Shutdown()
+    {
+        vkDestroyDevice(m_LogicalDevice, nullptr);
     }
 
     QueueFamilyIndices Device::FindQueueFamilies(const VkPhysicalDevice& device)
@@ -65,6 +71,31 @@ namespace Sakura {
         {
             throw std::runtime_error("Error: Failed to find suitable GPU!");
         }
+    }
+
+    void Device::CreateLogicalDevice()
+    {
+        QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
+
+        VkDeviceQueueCreateInfo queueCreateInfo;
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = indices.GraphicsFamily.value();
+        queueCreateInfo.queueCount = 1;
+
+        VkPhysicalDeviceFeatures deviceFeatures;
+        VkDeviceCreateInfo createInfo;
+        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        createInfo.pQueueCreateInfos = &queueCreateInfo;
+        createInfo.queueCreateInfoCount = 1;
+        createInfo.pEnabledFeatures = &deviceFeatures;
+
+        if (vkCreateDevice(m_PhysicalDevice, &createInfo, nullptr, &m_LogicalDevice) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Error: Failed to create logical device!");
+        }
+
+        vkGetDeviceQueue(m_LogicalDevice, indices.GraphicsFamily.value(), 0, &m_GraphicsQueue);
+
     }
 
     int Device::RateDevice(const VkPhysicalDevice& device)
