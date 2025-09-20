@@ -21,11 +21,37 @@ namespace Sakura {
         PickPhysicalDevice(devices);
     }
 
+    QueueFamilyIndices Device::FindQueueFamilies(const VkPhysicalDevice& device)
+    {
+        QueueFamilyIndices indices;
+
+        std::uint32_t queueFamilyCount = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+        int i = 0;
+        for (const VkQueueFamilyProperties& queueFamily : queueFamilies)
+        {
+            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+                indices.GraphicsFamily = i;
+
+            if (indices.IsComplete())
+                break;
+
+            i++;
+        }
+
+
+        return indices;
+    }
+
     void Device::PickPhysicalDevice(const std::vector<VkPhysicalDevice>& devices)
     {
         std::multimap<int, VkPhysicalDevice> deviceCandidates;
 
-        for (const auto& device : devices)
+        for (const VkPhysicalDevice& device : devices)
         {
             int score = RateDevice(device);
             deviceCandidates.insert(std::make_pair(score, device));
@@ -63,6 +89,8 @@ namespace Sakura {
 
     bool Device::IsDeviceSuitable(const VkPhysicalDevice& device)
     {
-        return true;
+        QueueFamilyIndices indices = FindQueueFamilies(device);
+
+        return indices.IsComplete();
     }
 }
