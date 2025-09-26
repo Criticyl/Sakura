@@ -3,8 +3,8 @@
 #include <vulkan/vulkan.h>
 
 #include "Window.h"
-#include "Renderer/GraphicsPipeline.h"
 #include "Device.h"
+#include "Debug.h"
 
 #include <iostream>
 
@@ -26,6 +26,7 @@ namespace Sakura {
         Application(const ApplicationProperties& appProperties)
             : m_Properties(appProperties)
         {
+            Init();
         }
 
         virtual ~Application();
@@ -44,7 +45,8 @@ namespace Sakura {
 
         bool m_ValidationLayerEnabled;
         ApplicationProperties m_Properties;
-        VkInstance m_Instance;
+        std::unique_ptr<DebugMessenger> m_DebugMessenger;
+        VkInstance m_Instance = nullptr;
         Device m_Device;
         std::unique_ptr<Window> m_Window;
         

@@ -24,7 +24,7 @@ Sakura::Application* Sakura::CreateApplication()
     props.ValidationLayers = {};
 #else
     props.ValidationLayers = {
-        "VK_LAYER_KHRONOS_validation"
+        "VK_LAYER_KHRONOS_validation",
     };
 #endif
 

@@ -8,16 +8,15 @@ SET(CORE_SOURCE_FILES
     src/Core/Window.h
     src/Core/Device.cpp
     src/Core/Device.h
+    src/Core/Debug.cpp
+    src/Core/Debug.h
 )
 
 set(RENDERER_SOURCE_FILES
-    src/Renderer/GraphicsPipeline.cpp
-    src/Renderer/GraphicsPipeline.h
 )
 
 SET(SOURCES
     ${CORE_SOURCE_FILES}
-    ${RENDERER_SOURCE_FILES}
     src/Sakura.h
 )
 

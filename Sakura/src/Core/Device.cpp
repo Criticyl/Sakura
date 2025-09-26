@@ -15,7 +15,7 @@ namespace Sakura {
             throw std::runtime_error("Error: Failed to find any GPU with Vulkan support!");
         }
 
-        std::vector<VkPhysicalDevice> devices;
+        std::vector<VkPhysicalDevice> devices(deviceCount);
         vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
         PickPhysicalDevice(devices);
@@ -62,14 +62,17 @@ namespace Sakura {
             int score = RateDevice(device);
             deviceCandidates.insert(std::make_pair(score, device));
         }
-
-        if (deviceCandidates.rbegin()->first > 0)
+        
+        if (!deviceCandidates.empty())
         {
-            m_PhysicalDevice = deviceCandidates.rbegin()->second;
-        }
-        else 
-        {
-            throw std::runtime_error("Error: Failed to find suitable GPU!");
+            if (deviceCandidates.rbegin()->first > 0)
+            {
+                m_PhysicalDevice = deviceCandidates.rbegin()->second;
+            }
+            else
+            {
+                throw std::runtime_error("Error: Failed to find suitable GPU!");
+            }
         }
     }
 
@@ -77,13 +80,15 @@ namespace Sakura {
     {
         QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
 
-        VkDeviceQueueCreateInfo queueCreateInfo;
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+        float queuePriority = 1.0f;
         queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         queueCreateInfo.queueFamilyIndex = indices.GraphicsFamily.value();
         queueCreateInfo.queueCount = 1;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
 
-        VkPhysicalDeviceFeatures deviceFeatures;
-        VkDeviceCreateInfo createInfo;
+        VkPhysicalDeviceFeatures deviceFeatures{};
+        VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
         createInfo.pQueueCreateInfos = &queueCreateInfo;
         createInfo.queueCreateInfoCount = 1;
@@ -100,8 +105,8 @@ namespace Sakura {
 
     int Device::RateDevice(const VkPhysicalDevice& device)
     {
-        VkPhysicalDeviceProperties deviceProperties;
-        VkPhysicalDeviceFeatures deviceFeatures;
+        VkPhysicalDeviceProperties deviceProperties{};
+        VkPhysicalDeviceFeatures deviceFeatures{};
         vkGetPhysicalDeviceProperties(device, &deviceProperties);
         vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 

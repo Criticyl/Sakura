@@ -10,7 +10,6 @@ int main() {
     try 
     {
         Sakura::Application* app = Sakura::CreateApplication();
-        app->Init();
         app->Run();
 
         delete app;

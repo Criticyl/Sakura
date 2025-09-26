@@ -12,6 +12,7 @@ namespace Sakura {
         Sakura::WindowProperties windowProps;
         m_Window = std::make_unique<Window>(windowProps);
         CreateVkInstance();
+        
         m_Device.Init(m_Instance);
     }
 
@@ -34,16 +35,33 @@ namespace Sakura {
         const char** glfwExtensions;
 
         glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+        std::vector<const char*> requiredExtensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+        requiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+        VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+        debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+        debugCreateInfo.messageSeverity =
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+        debugCreateInfo.messageType =
+            VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+        debugCreateInfo.pfnUserCallback = DebugMessenger::DebugCallback;
         
         VkInstanceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
-        createInfo.enabledExtensionCount = glfwExtensionCount;
-        createInfo.ppEnabledExtensionNames = glfwExtensions;
+        createInfo.enabledExtensionCount = static_cast<uint32_t>(requiredExtensions.size());
+        createInfo.ppEnabledExtensionNames = requiredExtensions.data();
         createInfo.enabledLayerCount = static_cast<uint32_t>(m_Properties.ValidationLayers.size());
         if (!m_Properties.ValidationLayers.empty())
         {
             createInfo.ppEnabledLayerNames = m_Properties.ValidationLayers.data();
+            createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+            
         }
 
         VkResult result = vkCreateInstance(&createInfo, nullptr, &m_Instance);
@@ -52,6 +70,13 @@ namespace Sakura {
         {
             throw std::runtime_error("Failed to create Vulkan Instance!");
         }
+
+        if (!m_Properties.ValidationLayers.empty())
+        {
+            m_DebugMessenger = std::make_unique<DebugMessenger>(m_Instance, debugCreateInfo);
+        }
+
+        std::cout << "Vulkan instance created!" << std::endl;
     }
 
     bool Application::CheckValidationLayerSupport(const std::vector<const char*>& validationLayers)
@@ -94,6 +119,10 @@ namespace Sakura {
 
     void Application::Shutdown()
     {
+        if (m_DebugMessenger)
+        {
+            m_DebugMessenger.reset();
+        }
         m_Device.Shutdown();
         vkDestroyInstance(m_Instance, nullptr);
     }

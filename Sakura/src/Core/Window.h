@@ -36,6 +36,8 @@ namespace Sakura {
 
         void Init();
 
+    private:
+
         int m_Width;
         int m_Height;
         std::string m_Title;
