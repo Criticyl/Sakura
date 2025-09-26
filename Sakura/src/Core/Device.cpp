@@ -1,12 +1,14 @@
 #include "Device.h"
 #include <stdexcept>
 #include <map>
+#include <set>
 
 namespace Sakura {
 
-    void Device::Init(const VkInstance& instance)
+    void Device::Init(const VkInstance& instance, const VkSurfaceKHR& surface)
     {
         m_PhysicalDevice = VK_NULL_HANDLE;
+        m_Surface = surface;
         std::uint32_t deviceCount = 0;
 
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -40,8 +42,16 @@ namespace Sakura {
         int i = 0;
         for (const VkQueueFamilyProperties& queueFamily : queueFamilies)
         {
+            VkBool32 presentSupport = false;
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_Surface, &presentSupport);
+
             if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
                 indices.GraphicsFamily = i;
+
+            if (presentSupport)
+            {
+                indices.PresentFamily = i;
+            }
 
             if (indices.IsComplete())
                 break;
@@ -80,18 +90,28 @@ namespace Sakura {
     {
         QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
 
-        VkDeviceQueueCreateInfo queueCreateInfo{};
+        std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+        std::set<uint32_t> uniqueQueueFamilies = {
+            indices.GraphicsFamily.value(),
+            indices.PresentFamily.value()
+        };
+
         float queuePriority = 1.0f;
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = indices.GraphicsFamily.value();
-        queueCreateInfo.queueCount = 1;
-        queueCreateInfo.pQueuePriorities = &queuePriority;
+        for (uint32_t queueFamily : uniqueQueueFamilies)
+        {
+            VkDeviceQueueCreateInfo queueCreateInfo{};
+            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfo.queueFamilyIndex = queueFamily;
+            queueCreateInfo.queueCount = 1;
+            queueCreateInfo.pQueuePriorities = &queuePriority;
+            queueCreateInfos.push_back(queueCreateInfo);
+        }
 
         VkPhysicalDeviceFeatures deviceFeatures{};
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        createInfo.pQueueCreateInfos = &queueCreateInfo;
-        createInfo.queueCreateInfoCount = 1;
+        createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+        createInfo.pQueueCreateInfos = queueCreateInfos.data();
         createInfo.pEnabledFeatures = &deviceFeatures;
 
         if (vkCreateDevice(m_PhysicalDevice, &createInfo, nullptr, &m_LogicalDevice) != VK_SUCCESS)
@@ -100,6 +120,7 @@ namespace Sakura {
         }
 
         vkGetDeviceQueue(m_LogicalDevice, indices.GraphicsFamily.value(), 0, &m_GraphicsQueue);
+        vkGetDeviceQueue(m_LogicalDevice, indices.PresentFamily.value(), 0, &m_PresentQueue);
 
     }
 

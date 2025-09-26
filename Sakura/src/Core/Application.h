@@ -47,6 +47,7 @@ namespace Sakura {
         ApplicationProperties m_Properties;
         std::unique_ptr<DebugMessenger> m_DebugMessenger;
         VkInstance m_Instance = nullptr;
+        VkSurfaceKHR m_Surface;
         Device m_Device;
         std::unique_ptr<Window> m_Window;
         

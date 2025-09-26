@@ -12,8 +12,13 @@ namespace Sakura {
         Sakura::WindowProperties windowProps;
         m_Window = std::make_unique<Window>(windowProps);
         CreateVkInstance();
+
+        if (glfwCreateWindowSurface(m_Instance, m_Window->GetWindow(), nullptr, &m_Surface) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Error: Failed to create window surface!");
+        }
         
-        m_Device.Init(m_Instance);
+        m_Device.Init(m_Instance, m_Surface);
     }
 
     void Application::CreateVkInstance()
@@ -119,11 +124,12 @@ namespace Sakura {
 
     void Application::Shutdown()
     {
+        m_Device.Shutdown();
+        vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
         if (m_DebugMessenger)
         {
             m_DebugMessenger.reset();
         }
-        m_Device.Shutdown();
         vkDestroyInstance(m_Instance, nullptr);
     }
 
